@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: none
       packages: none
 
     steps:
@@ -63,10 +63,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: none
-      packages: write
+      packages: none
 
     steps:
-      
       # Set Up前にcheckout必要
       - name: Download checkout folder
         uses: actions/download-artifact@v3
@@ -82,4 +81,4 @@ jobs:
       - name: Deploy to GitHub Packages
         run: mvn --settings ./settings.xml deploy -Dmaven.install.skip=true -DskipTests -Dbuild_time=${{ steps.setup.outputs.build_time }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.WRITE }}
