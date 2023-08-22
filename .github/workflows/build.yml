@@ -27,6 +27,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.READ2 }}
 
+      - name: Test
+        run: mvn --settings ./settings.xml test -Dbuild_time=${{ steps.setup.outputs.build_time }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.READ2 }}
+
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
@@ -41,7 +46,6 @@ jobs:
       packages: none
 
     steps:
-      
       # Set Up前にcheckout必要
       - name: Download checkout folder
         uses: actions/download-artifact@v3
@@ -56,8 +60,6 @@ jobs:
 
       - name: Test
         run: mvn --settings ./settings.xml test -Dbuild_time=${{ steps.setup.outputs.build_time }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.READ2 }}
 
   deploy:
     needs: test
