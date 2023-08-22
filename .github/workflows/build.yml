@@ -27,11 +27,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.READ2 }}
 
-      - name: Test
-        run: mvn --settings ./settings.xml test -Dbuild_time=${{ steps.setup.outputs.build_time }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.READ2 }}
-
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
@@ -60,6 +55,8 @@ jobs:
 
       - name: Test
         run: mvn --settings ./settings.xml test -Dbuild_time=${{ steps.setup.outputs.build_time }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.READ2 }}
 
   deploy:
     needs: test
@@ -83,6 +80,6 @@ jobs:
           release_build: false
 
       - name: Deploy to GitHub Packages
-        run: mvn --settings ./settings.xml deploy -Dbuild_time=${{ steps.setup.outputs.build_time }}
+        run: mvn --settings ./settings.xml deploy -DskipTests -Dbuild_time=${{ steps.setup.outputs.build_time }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
