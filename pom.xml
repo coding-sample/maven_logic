@@ -12,7 +12,7 @@
 
 	<groupId>com.example</groupId>
 	<artifactId>template_logic</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${build_time}</version>
 
 	<name>template_logic</name>
 	<description>Demo project for Spring Boot</description>
@@ -24,16 +24,15 @@
 		<repository>
 			<id>github</id>
 			<name>GitHub Packages</name>
-			<url>https://maven.pkg.github.com/zuruzirou/template_common</url>
+			<url>https://maven.pkg.github.com/template-maven/template_common</url>
 		</repository>
 	</repositories>
 
 	<dependencies>
-
 		<dependency>
 			<groupId>com.example</groupId>
 			<artifactId>template_common</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${build_time}</version>
 		</dependency>
 
 		<dependency>
