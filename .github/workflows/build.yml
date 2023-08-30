@@ -78,6 +78,16 @@ jobs:
         with:
           release_build: false
 
+      - name: Build with Maven
+        run: mvn --settings ./settings.xml clean install -Dbuild_time=${{ steps.setup.outputs.build_time }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.READ2 }}
+
+      - name: Test
+        run: mvn --settings ./settings.xml test -Dbuild_time=${{ steps.setup.outputs.build_time }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.READ2 }}
+
       - name: Deploy to GitHub Packages
         run: mvn --settings ./settings.xml deploy -Dmaven.install.skip=true -DskipTests -Dbuild_time=${{ steps.setup.outputs.build_time }}
         env:
