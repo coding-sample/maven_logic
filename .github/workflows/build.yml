@@ -63,7 +63,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: none
-      packages: none
+      packages: write
 
     steps:
       # Set Up前にcheckout必要
