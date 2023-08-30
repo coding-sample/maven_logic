@@ -84,7 +84,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.READ2 }}
 
       - name: Deploy to GitHub Packages
-        run: mvn --settings ./settings.xml deploy -Dmaven.install.skip=true -DskipTests -Dbuild_time=${{ steps.setup.outputs.build_time }}
+        run: mvn --settings ./settings.xml deploy -DskipTests -Dbuild_time=${{ steps.setup.outputs.build_time }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
