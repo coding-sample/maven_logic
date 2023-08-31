@@ -24,7 +24,8 @@ runs:
             else
                 suffix="-${GITHUB_REF#refs/heads/}-SNAPSHOT"
             fi
-            echo "build_time=$(date +%Y%m)${suffix}" | sed "s/\//-/g" >> $GITHUB_OUTPUT
+            # echo "build_time=$(date +%Y%m)${suffix}" | sed "s/\//-/g" >> $GITHUB_OUTPUT
+            echo "build_time=1${suffix}" | sed "s/\//-/g" >> $GITHUB_OUTPUT
           shell: bash
 
         - name: Set up JDK 17
