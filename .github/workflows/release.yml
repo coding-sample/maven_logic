@@ -1,0 +1,85 @@
+name: snapshot-build
+
+on: 
+  push:
+    branches-ignore:
+      - xxx
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: none
+
+    steps:
+      # Set Up前にcheckout必要
+      - uses: actions/checkout@v3
+
+      - name: Set Up
+        id: setup
+        uses: ./.github/workflows
+
+      - name: Build with Maven
+        run: mvn --settings ./settings.xml clean install -Dbuild_time=${{ steps.setup.outputs.build_time }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.READ2 }}
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: src
+          path: .
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: none
+      packages: none
+
+    steps:
+      # Set Up前にcheckout必要
+      - name: Download checkout folder
+        uses: actions/download-artifact@v3
+        with:
+          name: src
+      
+      - name: Set Up
+        id: setup
+        uses: ./.github/workflows
+
+      - name: Test
+        run: mvn --settings ./settings.xml test -Dbuild_time=${{ steps.setup.outputs.build_time }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.READ2 }}
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: none
+      packages: write
+
+    steps:
+      # Set Up前にcheckout必要
+      - name: Download checkout folder
+        uses: actions/download-artifact@v3
+        with:
+          name: src
+      
+      - name: Set Up
+        id: setup
+        uses: ./.github/workflows
+
+      - name: Build with Maven
+        run: mvn --settings ./settings.xml clean install -Dbuild_time=${{ steps.setup.outputs.build_time }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.READ2 }}
+
+      - name: Deploy to GitHub Packages
+        run: mvn --settings ./settings.xml deploy -DskipTests -Dbuild_time=${{ steps.setup.outputs.build_time }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          
