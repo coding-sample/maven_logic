@@ -3,7 +3,7 @@ name: release-build
 on: 
   push:
     branches-ignore:
-      - xxx
+      - master
 
 jobs:
   build:
