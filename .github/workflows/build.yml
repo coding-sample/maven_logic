@@ -13,25 +13,25 @@ jobs:
       packages: none
 
     steps:
-      # Set Up前にcheckout必要
-      - uses: actions/checkout@v3
+    # Set Up前にcheckout必要
+    - uses: actions/checkout@v3
 
-      - name: Set Up
-        id: setup
-        uses: ./.github/workflows
-        with:
-          release_build: false
+    - name: Set Up
+      id: setup
+      uses: ./.github/workflows
+      with:
+        release_build: false
 
-      - name: Build with Maven
-        run: mvn --settings ./settings.xml clean install -Dbuild_time=${{ steps.setup.outputs.build_time }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.READ2 }}
+    - name: Build with Maven
+      run: mvn --settings ./settings.xml clean install -Dbuild_time=${{ steps.setup.outputs.build_time }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.READ2 }}
 
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: src
-          path: .
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: src
+        path: .
 
   test:
     needs: build
@@ -41,22 +41,22 @@ jobs:
       packages: none
 
     steps:
-      # Set Up前にcheckout必要
-      - name: Download checkout folder
-        uses: actions/download-artifact@v3
-        with:
-          name: src
-      
-      - name: Set Up
-        id: setup
-        uses: ./.github/workflows
-        with:
-          release_build: false
+    # Set Up前にcheckout必要
+    - name: Download checkout folder
+      uses: actions/download-artifact@v3
+      with:
+        name: src
+    
+    - name: Set Up
+      id: setup
+      uses: ./.github/workflows
+      with:
+        release_build: false
 
-      - name: Test
-        run: mvn --settings ./settings.xml test -Dbuild_time=${{ steps.setup.outputs.build_time }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.READ2 }}
+    - name: Test
+      run: mvn --settings ./settings.xml test -Dbuild_time=${{ steps.setup.outputs.build_time }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.READ2 }}
 
   deploy:
     needs: test
@@ -66,26 +66,25 @@ jobs:
       packages: write
 
     steps:
-      # Set Up前にcheckout必要
-      - name: Download checkout folder
-        uses: actions/download-artifact@v3
-        with:
-          name: src
-      
-      - name: Set Up
-        id: setup
-        uses: ./.github/workflows
-        with:
-          release_build: false
+    # Set Up前にcheckout必要
+    - name: Download checkout folder
+      uses: actions/download-artifact@v3
+      with:
+        name: src
+    
+    - name: Set Up
+      id: setup
+      uses: ./.github/workflows
+      with:
+        release_build: false
 
-      - name: Build with Maven
-        run: mvn --settings ./settings.xml clean install -Dbuild_time=${{ steps.setup.outputs.build_time }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.READ2 }}
+    - name: Build with Maven
+      run: mvn --settings ./settings.xml clean install -Dbuild_time=${{ steps.setup.outputs.build_time }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.READ2 }}
 
-      - name: Deploy to GitHub Packages
-        run: mvn --settings ./settings.xml deploy -DskipTests -Dbuild_time=${{ steps.setup.outputs.build_time }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+    - name: Deploy to GitHub Packages
+      run: mvn --settings ./settings.xml deploy -DskipTests -Dbuild_time=${{ steps.setup.outputs.build_time }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
