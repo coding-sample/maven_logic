@@ -2,8 +2,10 @@ name: snapshot-build
 
 on: 
   push:
-    branches:
+    branches-ignore:
       - master
+    paths-ignore:
+      - '.github/workflows/release.yml'
 
 jobs:
   build:
@@ -14,7 +16,7 @@ jobs:
 
     steps:
     # Set Up前にcheckout必要
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set Up
       id: setup
@@ -22,10 +24,11 @@ jobs:
       with:
         release_build: false
 
+    # 別リポジトリのPackage参照にはPATが必要
     - name: Build with Maven
       run: mvn --settings ./settings.xml clean install -Dbuild_time=${{ steps.setup.outputs.build_time }}
       env:
-        GITHUB_TOKEN: ${{ secrets.READ2 }}
+        GITHUB_TOKEN: ${{ secrets.PKG_READ_ETERNAL }}
 
     - name: Upload build artifact
       uses: actions/upload-artifact@v3
@@ -37,15 +40,12 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     permissions:
-      contents: none
+      contents: read
       packages: none
 
     steps:
     # Set Up前にcheckout必要
-    - name: Download checkout folder
-      uses: actions/download-artifact@v3
-      with:
-        name: src
+    - uses: actions/checkout@v4
     
     - name: Set Up
       id: setup
@@ -53,24 +53,22 @@ jobs:
       with:
         release_build: false
 
+    # 別リポジトリのPackage参照にはPATが必要
     - name: Test
       run: mvn --settings ./settings.xml test -Dbuild_time=${{ steps.setup.outputs.build_time }}
       env:
-        GITHUB_TOKEN: ${{ secrets.READ2 }}
+        GITHUB_TOKEN: ${{ secrets.PKG_READ_ETERNAL }}
 
   deploy:
     needs: test
     runs-on: ubuntu-latest
     permissions:
-      contents: none
+      contents: read
       packages: write
 
     steps:
     # Set Up前にcheckout必要
-    - name: Download checkout folder
-      uses: actions/download-artifact@v3
-      with:
-        name: src
+    - uses: actions/checkout@v4
     
     - name: Set Up
       id: setup
@@ -78,10 +76,11 @@ jobs:
       with:
         release_build: false
 
+    # 別リポジトリのPackage参照にはPATが必要
     - name: Build with Maven
       run: mvn --settings ./settings.xml clean install -Dbuild_time=${{ steps.setup.outputs.build_time }}
       env:
-        GITHUB_TOKEN: ${{ secrets.READ2 }}
+        GITHUB_TOKEN: ${{ secrets.PKG_READ_ETERNAL }}
 
     - name: Deploy to GitHub Packages
       run: mvn --settings ./settings.xml deploy -DskipTests -Dbuild_time=${{ steps.setup.outputs.build_time }}
