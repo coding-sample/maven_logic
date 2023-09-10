@@ -23,8 +23,16 @@
 	<repositories>
 		<repository>
 			<id>github</id>
-			<name>GitHub Packages</name>
-			<url>https://maven.pkg.github.com/coding-sample/maven_common</url>
+			<name>GitHub Packages releases</name>
+			<url>https://maven.pkg.github.com/coding-sample/maven_common/releases</url>
+		</repository>
+		<repository>
+			<id>github</id>
+			<name>GitHub Packages snapshots</name>
+			<url>https://maven.pkg.github.com/coding-sample/maven_common/snapshots</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
 
@@ -43,7 +51,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>snapshots.com.example</groupId>
+			<groupId>com.example</groupId>
 			<artifactId>maven_common</artifactId>
 			<version>${build_time}</version>
 		</dependency>
