@@ -28,7 +28,7 @@ jobs:
     - name: Build with Maven
       run: mvn --settings ./settings.xml clean install -Dbuild_time=${{ steps.setup.outputs.build_time }}
       env:
-        GITHUB_TOKEN: ${{ secrets.PKG_FULL }}
+        GITHUB_TOKEN: ${{ secrets.PKG_READ_ETERNAL }}
 
     - name: Upload build artifact
       uses: actions/upload-artifact@v3
