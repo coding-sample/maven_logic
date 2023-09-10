@@ -43,7 +43,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.example</groupId>
+			<groupId>snapshots.com.example</groupId>
 			<artifactId>maven_common</artifactId>
 			<version>${build_time}</version>
 		</dependency>
