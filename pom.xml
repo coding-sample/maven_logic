@@ -22,9 +22,17 @@
 
 	<repositories>
 		<repository>
-			<id>github</id>
-			<name>GitHub Packages</name>
-			<url>https://maven.pkg.github.com/coding-sample/maven_common</url>
+			<id>github_releases</id>
+			<name>GitHub Packages releases</name>
+			<url>https://maven.pkg.github.com/coding-sample/maven_common/releases</url>
+		</repository>
+		<repository>
+			<id>github_snapshots</id>
+			<name>GitHub Packages snapshots</name>
+			<url>https://maven.pkg.github.com/coding-sample/maven_common/snapshots</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
 
