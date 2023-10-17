@@ -9,6 +9,52 @@ on:
   workflow_dispatch:
 
 jobs:
+  poll_maven_common_status:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check maven_common build status for the same tag
+      run: |
+        # ポーリング設定
+        MAX_RETRIES=30  # 最大リトライ回数
+        DELAY=60        # ポーリングの間隔（秒）
+
+        REPO_OWNER="your_repo_owner" # リポジトリのオーナー名を設定
+        REPO_NAME="maven_common"     # maven_commonのリポジトリ名
+        TAG_NAME="${{ github.event.ref }}"  # トリガーされたタグ名
+
+        retry_count=0
+
+        echo "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/actions/runs?event=push&ref=$TAG_NAME"
+
+        while [[ $retry_count -lt $MAX_RETRIES ]]; do
+          # GitHub APIを使用して特定のタグのワークフローの実行状況を取得
+          response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/actions/runs?event=push&ref=$TAG_NAME")
+
+          # そのタグのワークフロー実行のステータスを取得
+          status=$(echo "$response" | jq -r '.workflow_runs[0].conclusion')
+
+          if [[ $status == "success" ]]; then
+            echo "maven_common build for tag $TAG_NAME was successful!"
+            exit 0
+          elif [[ $status == "failure" ]]; then
+            echo "maven_common build for tag $TAG_NAME failed!"
+            exit 1
+          fi
+
+          # まだ完了していない場合、一定時間待機
+          ((retry_count++))
+          echo "Waiting for maven_common build for tag $TAG_NAME to complete. Retry $retry_count/$MAX_RETRIES..."
+          sleep $DELAY
+        done
+
+        # 最大リトライ回数に達した場合
+        echo "Reached maximum retries. Exiting..."
+        exit 1
+      env:
+        GITHUB_TOKEN: ${{ secrets.PKG_READ_ETERNAL }}
+
   build:
     runs-on: ubuntu-latest
     permissions:
