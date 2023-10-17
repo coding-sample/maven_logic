@@ -7,7 +7,7 @@ on:
     paths-ignore:
       - '.github/workflows/build.yml'
       tags:
-        - '*リリース'
+      - '*リリース'
   workflow_dispatch:
 
 jobs:
