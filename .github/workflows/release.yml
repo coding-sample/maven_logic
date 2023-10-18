@@ -58,6 +58,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PKG_READ_ETERNAL }}
 
   build:
+    needs: poll_maven_common_status
     runs-on: ubuntu-latest
     permissions:
       contents: read
