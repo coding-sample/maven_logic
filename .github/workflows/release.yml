@@ -8,6 +8,8 @@ on:
       - '.github/workflows/build.yml'
     tags:
       - '*リリース'
+  repository_dispatch:
+    types: [maven_common_build_success]
   workflow_dispatch:
 
 jobs:
