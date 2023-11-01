@@ -40,7 +40,7 @@ jobs:
           CHAIN_JSON=${{ toJson(github.event.client_payload.chain) }}
           WORKFLOW_FILE_NAME=${{ github.event.client_payload.workflow_file_name }}
           TAG_NAME=${{ github.event.client_payload.tag_name }}
-          CURRENT_REPO=${{ github.repository }}
+          CURRENT_REPO=$(echo "${{ github.repository }}" | cut -d'/' -f2)  # This will be 'maven_logic'
           NEXT_REPO_NAME=""
           FOUND_CURRENT=false
           for REPO in $(echo $CHAIN_JSON | jq -r '.[]'); do
