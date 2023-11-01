@@ -1,13 +1,8 @@
-name: release-build
+name: release build for tag
 
 on: 
   repository_dispatch:
-    types: [maven_common_build_success]
-  workflow_dispatch:
-    inputs:
-      chain:
-        description: 'Array of repositories in build chain'
-        required: true
+    types: [trigger_chain]
 
 jobs:
   build:
@@ -20,7 +15,7 @@ jobs:
       # Set Up前にcheckout必要
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.client_payload.tag }}  # Use the tag from the payload
+          ref: ${{ github.event.client_payload.tag_name }}  # Use the tag from the payload
 
       - name: Set Up
         id: setup
@@ -42,23 +37,26 @@ jobs:
       - name: Trigger next repo build
         if: success()  # Only run this step if the build was successful
         run: |
-          CHAIN_JSON=${{ toJson(github.event.inputs.chain) }}
+          CHAIN_JSON=${{ toJson(github.event.client_payload.chain) }}
+          WORKFLOW_FILE_NAME=${{ github.event.client_payload.workflow_file_name }}
+          TAG_NAME=${{ github.event.client_payload.tag_name }}
           CURRENT_REPO=${{ github.repository }}
-          NEXT_REPO=""
+          NEXT_REPO_NAME=""
           FOUND_CURRENT=false
           for REPO in $(echo $CHAIN_JSON | jq -r '.[]'); do
             if [ "$FOUND_CURRENT" = true ]; then
-              NEXT_REPO=$REPO
+              NEXT_REPO_NAME=$REPO
               break
             fi
             if [ "$REPO" = "$CURRENT_REPO" ]; then
               FOUND_CURRENT=true
             fi
           done
-          if [ -n "$NEXT_REPO" ]; then
+          if [ -n "$NEXT_REPO_NAME" ]; then
+            echo "Triggering workflow in $NEXT_REPO_NAME with file $WORKFLOW_FILE_NAME and tag $TAG_NAME"
             curl -X POST \
                 -H "Authorization: token ${{ secrets.PKG_READ_ETERNAL }}" \
                 -H "Accept: application/vnd.github.v3+json" \
-                https://api.github.com/repos/coding-sample/$NEXT_REPO/dispatches \
-                -d '{"event_type": "'$(echo $CHAIN_JSON | jq -r '.[1:] | @csv')'", "client_payload": {"tag": "${{ github.ref_name }}"} }'
+                https://api.github.com/repos/coding-sample/$NEXT_REPO_NAME/actions/workflows/$WORKFLOW_FILE_NAME/dispatches \
+                -d '{"event_type": "trigger_chain", "client_payload": {"chain": "'$(echo $CHAIN_JSON | jq -r '.[1:] | @csv')'", "workflow_file_name": "'$WORKFLOW_FILE_NAME'", "tag_name": "'$TAG_NAME'"}}'
           fi
