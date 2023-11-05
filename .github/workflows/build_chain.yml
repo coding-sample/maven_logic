@@ -31,7 +31,7 @@ jobs:
         IFS=',' read -r -a CHAIN_ARRAY <<< "${{ github.event.inputs.chain }}"
         WORKFLOW_FILE_NAME=${{ github.event.inputs.workflow_file_name }}
         TAG_NAME=${GITHUB_REF#refs/tags/}
-        echo "tag name is $TAG_NAME"
+        REPO_LIST=${{ github.event.inputs.chain }}
         CURRENT_REPO=$(echo "${{ github.repository }}" | cut -d'/' -f2)  # This will be 'maven_common'
         NEXT_REPO_NAME=""
         FOUND_CURRENT=false
@@ -55,5 +55,5 @@ jobs:
               -H "Authorization: token ${{ secrets.PKG_READ_ETERNAL }}" \
               -H "Accept: application/vnd.github.v3+json" \
               https://api.github.com/repos/coding-sample/$NEXT_REPO_NAME/actions/workflows/$WORKFLOW_FILE_NAME/dispatches \
-              -d '{"ref": "$TAG_NAME", "inputs": {"chain": "${{ github.event.inputs.chain }}", "workflow_file_name": "$WORKFLOW_FILE_NAME"}}'
+              -d "{\"ref\": \"$TAG_NAME\", \"inputs\": {\"chain\": \"$REPO_LIST\", \"workflow_file_name\": \"$WORKFLOW_FILE_NAME\"}}"
         fi
