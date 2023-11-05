@@ -1,14 +1,6 @@
 name: release-build
 
 on: 
-  push:
-    branches:
-      - master
-    paths-ignore:
-      - '.github/workflows/build.yml'
-      - '.github/workflows/build_chain.yml'
-    tags:
-      - '*リリース'
   repository_dispatch:
     types: [maven_common_build_success]
   workflow_dispatch:
