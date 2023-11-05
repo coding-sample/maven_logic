@@ -18,13 +18,6 @@ jobs:
       contents: none
       packages: none
     steps:
-      # Set Up前にcheckout必要
-    - uses: actions/checkout@v3
-
-    - name: Set Up
-      id: setup
-      uses: ./.github/workflows
-
     - name: Trigger next repo build
       if: success()  # Only run this step if the build was successful
       run: |
