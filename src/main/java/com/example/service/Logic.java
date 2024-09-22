@@ -1,14 +1,28 @@
-package com.example.maven_logic;
+package com.example.service;
 
-import com.example.maven_common.StringUtil;
+import com.example.StringUtil;
 
+/**
+ * Logicクラスは、文字列の処理を行うユーティリティクラスです。
+ */
 public class Logic {
     private StringUtil stringUtil;
 
+    /**
+     * Logicクラスのコンストラクタ。
+     * StringUtilのインスタンスを初期化します。
+     */
     public Logic() {
         this.stringUtil = new StringUtil();
     }
 
+    /**
+     * 入力文字列を処理し、特定のフォーマットで返します。
+     * 文字は大文字に変換され、数字は1増加されます。
+     * 
+     * @param input 処理する入力文字列
+     * @return 処理された文字列
+     */
     public String processData(String input) {
         if (input == null || input.isEmpty()) {
             return "No input provided";
@@ -30,13 +44,5 @@ public class Logic {
         result.append(" - ").append(stringUtil.getRepo());
         
         return result.toString();
-    }
-
-    public int calculateSum(int[] numbers) {
-        int sum = 0;
-        for (int num : numbers) {
-            sum += num;
-        }
-        return sum;
     }
 }
